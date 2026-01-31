@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f1a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#feca57;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#48dbfb;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ee5a24;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="200" rx="12" fill="url(#bgGrad)"/>
+
+  <!-- Film clapper icon -->
+  <g transform="translate(50, 50)">
+    <!-- Clapper top -->
+    <rect x="0" y="0" width="80" height="20" rx="3" fill="#ff6b6b" transform="rotate(-15, 40, 10)"/>
+    <rect x="0" y="0" width="80" height="20" rx="3" fill="none" stroke="#fff" stroke-width="2" transform="rotate(-15, 40, 10)"/>
+    <!-- Stripes on clapper -->
+    <rect x="10" y="5" width="8" height="10" fill="#0f0f1a" transform="rotate(-15, 40, 10)"/>
+    <rect x="30" y="5" width="8" height="10" fill="#0f0f1a" transform="rotate(-15, 40, 10)"/>
+    <rect x="50" y="5" width="8" height="10" fill="#0f0f1a" transform="rotate(-15, 40, 10)"/>
+    <rect x="70" y="5" width="8" height="10" fill="#0f0f1a" transform="rotate(-15, 40, 10)"/>
+
+    <!-- Clapper body -->
+    <rect x="0" y="25" width="80" height="70" rx="5" fill="#feca57"/>
+    <rect x="0" y="25" width="80" height="70" rx="5" fill="none" stroke="#fff" stroke-width="2"/>
+
+    <!-- Scene info lines -->
+    <line x1="10" y1="45" x2="70" y2="45" stroke="#0f0f1a" stroke-width="2"/>
+    <line x1="10" y1="60" x2="70" y2="60" stroke="#0f0f1a" stroke-width="2"/>
+    <line x1="10" y1="75" x2="50" y2="75" stroke="#0f0f1a" stroke-width="2"/>
+  </g>
+
+  <!-- Sparkle effects -->
+  <circle cx="140" cy="45" r="3" fill="#48dbfb"/>
+  <circle cx="120" cy="110" r="2" fill="#feca57"/>
+
+  <!-- Main title -->
+  <text x="170" y="90" font-family="system-ui, -apple-system, sans-serif" font-size="56" font-weight="800" fill="url(#textGrad)">
+    SceneCraft
+  </text>
+
+  <!-- Tagline -->
+  <text x="170" y="125" font-family="system-ui, -apple-system, sans-serif" font-size="18" fill="#a0a0a0">
+    Craft cinematic video prompts from any content
+  </text>
+
+  <!-- Feature badges -->
+  <g transform="translate(170, 140)">
+    <rect x="0" y="0" width="55" height="22" rx="4" fill="#ff6b6b" opacity="0.2"/>
+    <text x="27" y="15" font-family="monospace" font-size="11" fill="#ff6b6b" text-anchor="middle">Text</text>
+
+    <rect x="65" y="0" width="55" height="22" rx="4" fill="#feca57" opacity="0.2"/>
+    <text x="92" y="15" font-family="monospace" font-size="11" fill="#feca57" text-anchor="middle">EPUB</text>
+
+    <rect x="130" y="0" width="55" height="22" rx="4" fill="#48dbfb" opacity="0.2"/>
+    <text x="157" y="15" font-family="monospace" font-size="11" fill="#48dbfb" text-anchor="middle">Images</text>
+
+    <rect x="195" y="0" width="55" height="22" rx="4" fill="#1dd1a1" opacity="0.2"/>
+    <text x="222" y="15" font-family="monospace" font-size="11" fill="#1dd1a1" text-anchor="middle">PDF</text>
+
+    <rect x="260" y="0" width="70" height="22" rx="4" fill="#a29bfe" opacity="0.2"/>
+    <text x="295" y="15" font-family="monospace" font-size="11" fill="#a29bfe" text-anchor="middle">Gemini AI</text>
+  </g>
+
+  <!-- Decorative elements -->
+  <circle cx="720" cy="40" r="4" fill="#ff6b6b" opacity="0.6"/>
+  <circle cx="750" cy="70" r="3" fill="#feca57" opacity="0.6"/>
+  <circle cx="730" cy="100" r="5" fill="#48dbfb" opacity="0.4"/>
+  <circle cx="760" cy="140" r="3" fill="#1dd1a1" opacity="0.5"/>
+  <circle cx="700" cy="160" r="2" fill="#a29bfe" opacity="0.6"/>
+
+  <!-- Film strip decoration on right -->
+  <g transform="translate(680, 30)" opacity="0.3">
+    <rect x="0" y="0" width="40" height="140" rx="3" fill="none" stroke="#fff" stroke-width="1"/>
+    <rect x="5" y="10" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="27" y="10" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="5" y="30" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="27" y="30" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="5" y="50" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="27" y="50" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="5" y="70" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="27" y="70" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="5" y="90" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="27" y="90" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="5" y="110" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="27" y="110" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="5" y="130" width="8" height="6" rx="1" fill="#fff"/>
+    <rect x="27" y="130" width="8" height="6" rx="1" fill="#fff"/>
+  </g>
+</svg>
