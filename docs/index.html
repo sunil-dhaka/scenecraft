@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SceneCraft - Craft cinematic video prompts</title>
+<meta name="description" content="Transform text, books, and images into production-ready scene descriptions for AI video generators.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='2' fill='%2309090b'/><rect x='1' y='1' width='30' height='30' rx='1' fill='none' stroke='%2306b6d4' stroke-width='1'/><text x='16' y='21' font-size='10' font-family='monospace' font-weight='700' fill='%2306b6d4' text-anchor='middle'>SC</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg-void:#09090b;
+--bg-elevated:#18181b;
+--bg-card:#1c1c22;
+--accent:#06b6d4;
+--accent-glow:rgba(6,182,212,0.15);
+--text-primary:#fafafa;
+--text-secondary:#a1a1aa;
+--text-dim:#52525b;
+--border:#27272a;
+--radius:2px;
+}
+html{scroll-behavior:smooth}
+body{
+font-family:'IBM Plex Sans',system-ui,sans-serif;
+background:var(--bg-void);
+color:var(--text-primary);
+line-height:1.6;
+-webkit-font-smoothing:antialiased;
+}
+
+/* NAV */
+nav{
+position:fixed;top:0;left:0;right:0;z-index:100;
+border-bottom:1px solid var(--border);
+background:var(--bg-void);
+}
+.nav-inner{
+max-width:1200px;margin:0 auto;
+padding:0 32px;
+height:56px;
+display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+font-family:'IBM Plex Mono',monospace;
+font-weight:500;font-size:15px;
+color:var(--text-primary);
+text-decoration:none;
+letter-spacing:-0.02em;
+}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{
+font-family:'IBM Plex Sans',sans-serif;
+font-size:14px;font-weight:400;
+color:var(--text-secondary);
+text-decoration:none;
+transition:color 0.15s;
+}
+.nav-links a:hover{color:var(--text-primary)}
+
+/* HERO */
+.hero{
+min-height:100vh;
+padding-top:56px;
+display:flex;align-items:center;
+position:relative;overflow:hidden;
+}
+.hero-blueprint{
+position:absolute;top:0;right:0;bottom:0;width:45%;
+background:
+repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(6,182,212,0.06) 39px,rgba(6,182,212,0.06) 40px),
+repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(6,182,212,0.06) 39px,rgba(6,182,212,0.06) 40px),
+radial-gradient(circle 1px at 0 0,rgba(6,182,212,0.15) 1px,transparent 1px);
+background-size:40px 40px,40px 40px,40px 40px;
+mask-image:linear-gradient(to left,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.3) 40%,transparent 85%);
+-webkit-mask-image:linear-gradient(to left,rgba(0,0,0,0.5) 0%,rgba(0,0,0,0.3) 40%,transparent 85%);
+pointer-events:none;
+}
+.hero-content{
+max-width:1200px;margin:0 auto;padding:0 32px;
+width:100%;position:relative;z-index:1;
+}
+.hero h1{
+font-family:'Space Grotesk',sans-serif;
+font-size:72px;font-weight:700;
+line-height:1.05;letter-spacing:-0.03em;
+margin-bottom:20px;
+}
+.hero h1 .cyan{color:var(--accent)}
+.hero-sub{
+font-size:16px;color:var(--text-secondary);
+max-width:460px;line-height:1.7;
+margin-bottom:36px;
+}
+.install-block{
+display:inline-flex;align-items:center;gap:0;
+border:1px solid var(--accent);
+border-radius:var(--radius);
+background:var(--bg-elevated);
+overflow:hidden;
+}
+.install-block code{
+font-family:'IBM Plex Mono',monospace;
+font-size:14px;font-weight:400;
+color:var(--text-primary);
+padding:12px 16px;
+display:block;
+user-select:all;
+white-space:nowrap;
+}
+.install-block button{
+background:none;border:none;border-left:1px solid var(--border);
+color:var(--text-secondary);cursor:pointer;
+padding:12px 14px;
+display:flex;align-items:center;justify-content:center;
+transition:color 0.15s,background 0.15s;
+}
+.install-block button:hover{color:var(--accent);background:var(--accent-glow)}
+.install-block button svg{width:16px;height:16px}
+
+/* SECTIONS */
+section{padding:100px 0}
+.container{max-width:1200px;margin:0 auto;padding:0 32px}
+.section-title{
+font-family:'Space Grotesk',sans-serif;
+font-size:32px;font-weight:700;
+letter-spacing:-0.02em;
+margin-bottom:48px;
+}
+
+/* FEATURE GRID */
+.feature-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:16px;
+}
+.feature-card{
+background:var(--bg-card);
+border:1px solid var(--border);
+border-radius:var(--radius);
+padding:28px;
+transition:border-color 0.2s,box-shadow 0.2s;
+}
+.feature-card:hover{
+border-color:var(--accent);
+box-shadow:0 0 20px var(--accent-glow);
+}
+.feature-dot{
+width:10px;height:10px;
+border-radius:50%;
+background:var(--accent);
+margin-bottom:16px;
+}
+.feature-card h3{
+font-family:'Space Grotesk',sans-serif;
+font-size:17px;font-weight:700;
+margin-bottom:8px;
+letter-spacing:-0.01em;
+}
+.feature-card p{
+font-size:14px;color:var(--text-secondary);
+line-height:1.6;
+}
+
+/* ARCHITECTURE */
+.arch-flow{
+display:flex;align-items:center;
+gap:0;
+overflow-x:auto;
+padding:8px 0;
+}
+.arch-node{
+font-family:'IBM Plex Mono',monospace;
+font-size:14px;font-weight:500;
+color:var(--accent);
+border:1px solid var(--accent);
+border-radius:var(--radius);
+padding:16px 24px;
+white-space:nowrap;
+flex-shrink:0;
+background:var(--bg-void);
+}
+.arch-arrow{
+display:flex;align-items:center;
+flex-shrink:0;
+padding:0 4px;
+}
+.arch-arrow-line{
+width:48px;height:1px;
+background:var(--accent);
+position:relative;
+}
+.arch-arrow-head{
+width:0;height:0;
+border-top:5px solid transparent;
+border-bottom:5px solid transparent;
+border-left:7px solid var(--accent);
+flex-shrink:0;
+}
+
+/* CODE EXAMPLE */
+.code-section{background:var(--bg-void)}
+.tab-bar{
+display:flex;gap:0;
+border-bottom:1px solid var(--border);
+margin-bottom:0;
+}
+.tab-btn{
+font-family:'IBM Plex Mono',monospace;
+font-size:13px;font-weight:500;
+color:var(--text-dim);
+background:none;border:none;
+padding:12px 20px;
+cursor:pointer;
+border-bottom:2px solid transparent;
+transition:color 0.15s,border-color 0.15s;
+position:relative;
+bottom:-1px;
+}
+.tab-btn.active{
+color:var(--accent);
+border-bottom-color:var(--accent);
+}
+.tab-btn:hover:not(.active){color:var(--text-secondary)}
+.code-block{
+background:var(--bg-elevated);
+border:1px solid var(--border);
+border-top:none;
+border-radius:0 0 var(--radius) var(--radius);
+padding:24px;
+overflow-x:auto;
+}
+.code-block pre{
+font-family:'IBM Plex Mono',monospace;
+font-size:13px;line-height:1.7;
+color:var(--text-secondary);
+white-space:pre;
+}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.kw{color:var(--accent)}
+.str{color:#67e8f9}
+.cmt{color:var(--text-dim);font-style:italic}
+.label{color:#a1a1aa;font-weight:500}
+
+/* METRICS */
+.metrics-section{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:56px 0}
+.metrics-row{
+display:flex;
+justify-content:space-between;
+}
+.metric{
+flex:1;
+text-align:center;
+position:relative;
+}
+.metric:not(:last-child)::after{
+content:'';
+position:absolute;right:0;top:10%;
+height:80%;width:1px;
+background:var(--border);
+}
+.metric-value{
+font-family:'Space Grotesk',sans-serif;
+font-size:40px;font-weight:700;
+color:var(--text-primary);
+line-height:1;
+margin-bottom:8px;
+}
+.metric-label{
+font-size:13px;color:var(--text-dim);
+font-weight:400;
+}
+
+/* INSTALL SECTION */
+.install-section{text-align:center}
+.install-section .install-block{margin-bottom:16px}
+.install-alt{
+font-family:'IBM Plex Mono',monospace;
+font-size:14px;color:var(--text-dim);
+margin-bottom:24px;
+}
+.install-alt span{color:var(--text-secondary)}
+.install-note{
+font-size:14px;color:var(--text-secondary);
+}
+.install-note code{
+font-family:'IBM Plex Mono',monospace;
+color:var(--accent);font-size:13px;
+background:var(--bg-elevated);
+padding:2px 6px;
+border-radius:var(--radius);
+}
+
+/* FOOTER */
+footer{
+border-top:1px solid var(--border);
+padding:32px 0;
+}
+.footer-inner{
+max-width:1200px;margin:0 auto;padding:0 32px;
+display:flex;align-items:center;justify-content:space-between;
+}
+.footer-left{display:flex;align-items:center;gap:24px}
+.footer-logo{
+font-family:'IBM Plex Mono',monospace;
+font-size:14px;font-weight:500;
+color:var(--text-secondary);
+}
+.footer-links{display:flex;gap:20px}
+.footer-links a{
+font-size:13px;color:var(--text-dim);
+text-decoration:none;transition:color 0.15s;
+}
+.footer-links a:hover{color:var(--text-secondary)}
+.footer-right{
+font-size:13px;color:var(--text-dim);
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+.hero h1{font-size:40px}
+.hero-blueprint{display:none}
+.feature-grid{grid-template-columns:1fr}
+.arch-flow{flex-direction:column;align-items:stretch}
+.arch-arrow{
+flex-direction:column;align-items:center;
+padding:4px 0;
+}
+.arch-arrow-line{
+width:1px;height:32px;
+}
+.arch-arrow-head{
+border-top:none;border-bottom:none;
+border-left:5px solid transparent;
+border-right:5px solid transparent;
+border-top:7px solid var(--accent);
+}
+.metrics-row{flex-direction:column;gap:32px}
+.metric:not(:last-child)::after{display:none}
+.nav-links{gap:16px}
+.nav-links a{font-size:13px}
+.footer-inner{flex-direction:column;gap:16px;text-align:center}
+.footer-left{flex-direction:column;gap:12px}
+}
+@media(max-width:480px){
+.hero h1{font-size:32px}
+.nav-links{gap:12px}
+.container{padding:0 20px}
+.nav-inner{padding:0 20px}
+}
+
+@media(prefers-reduced-motion:reduce){
+*,*::before,*::after{
+transition-duration:0s !important;
+animation-duration:0s !important;
+}
+html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+<div class="nav-inner">
+<a href="#" class="nav-logo">scenecraft</a>
+<div class="nav-links">
+<a href="#features">Features</a>
+<a href="#architecture">Architecture</a>
+<a href="#install">Install</a>
+<a href="https://github.com/sunil-dhaka/scenecraft" target="_blank" rel="noopener">GitHub</a>
+</div>
+</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+<div class="hero-blueprint" aria-hidden="true"></div>
+<div class="hero-content">
+<h1>Craft cinematic<br>video <span class="cyan">prompts</span></h1>
+<p class="hero-sub">Transform text, books, and images into production-ready scene descriptions for AI video generators.</p>
+<div class="install-block">
+<code id="hero-cmd">npm install -g scenecraft</code>
+<button onclick="copyCommand('hero-cmd', this)" aria-label="Copy install command">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+</button>
+</div>
+</div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+<div class="container">
+<h2 class="section-title">Features</h2>
+<div class="feature-grid">
+<div class="feature-card">
+<div class="feature-dot"></div>
+<h3>Multi-Format Input</h3>
+<p>Text, PDF, EPUB, Markdown, and images. Paste content or point to a file.</p>
+</div>
+<div class="feature-card">
+<div class="feature-dot"></div>
+<h3>4 Visual Styles</h3>
+<p>Cinematic, Documentary, Artistic, Minimal. Each shapes camera, lighting, and mood differently.</p>
+</div>
+<div class="feature-card">
+<div class="feature-dot"></div>
+<h3>Smart Scene Details</h3>
+<p>Camera movements, lighting setups, emotional tone, and optional character dialogue. Production-ready.</p>
+</div>
+<div class="feature-card">
+<div class="feature-dot"></div>
+<h3>Interactive Viewer</h3>
+<p>Browse scenes with arrow keys. Copy any prompt to clipboard with one keystroke.</p>
+</div>
+<div class="feature-card">
+<div class="feature-dot"></div>
+<h3>CLI &amp; Library</h3>
+<p>Use as a command-line tool or import as an npm package. JSON, Markdown, and plain text output.</p>
+</div>
+<div class="feature-card">
+<div class="feature-dot"></div>
+<h3>Gemini 3 Pro</h3>
+<p>Powered by Google's latest model. Understands narrative structure, cinematography, and visual storytelling.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+<div class="container">
+<h2 class="section-title">Architecture</h2>
+<div class="arch-flow">
+<div class="arch-node">Text / PDF / Image</div>
+<div class="arch-arrow"><div class="arch-arrow-line"></div><div class="arch-arrow-head"></div></div>
+<div class="arch-node">Scene Analysis</div>
+<div class="arch-arrow"><div class="arch-arrow-line"></div><div class="arch-arrow-head"></div></div>
+<div class="arch-node">Prompt Generation</div>
+<div class="arch-arrow"><div class="arch-arrow-line"></div><div class="arch-arrow-head"></div></div>
+<div class="arch-node">Styled Output</div>
+</div>
+</div>
+</section>
+
+<!-- CODE EXAMPLE -->
+<section class="code-section">
+<div class="container">
+<h2 class="section-title">Example</h2>
+<div>
+<div class="tab-bar">
+<button class="tab-btn active" data-tab="input" onclick="switchTab('input')">Input</button>
+<button class="tab-btn" data-tab="output" onclick="switchTab('output')">Output</button>
+</div>
+<div class="code-block">
+<div class="tab-panel active" id="panel-input">
+<pre><span class="kw">scenecraft</span> generate <span class="kw">-t</span> <span class="str">"A lone astronaut discovers an
+ancient library floating in deep space"</span> <span class="kw">--style</span> cinematic</pre>
+</div>
+<div class="tab-panel" id="panel-output">
+<pre><span class="cmt">[Scene 1]</span> <span class="kw">The Discovery</span>
+A lone astronaut in a weathered EVA suit drifts
+through absolute darkness. Their helmet lamp reveals
+the impossible: towering bookshelves stretching into
+infinity, orbiting slowly in zero gravity.
+
+<span class="label">Duration:</span> 8s
+<span class="label">Camera:</span> Wide establishing shot, slow dolly forward
+<span class="label">Lighting:</span> Single helmet lamp, volumetric dust particles
+<span class="label">Mood:</span> Awe, solitude, cosmic wonder</pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- METRICS -->
+<section class="metrics-section">
+<div class="container">
+<div class="metrics-row">
+<div class="metric">
+<div class="metric-value">5</div>
+<div class="metric-label">scenes per run</div>
+</div>
+<div class="metric">
+<div class="metric-value">4</div>
+<div class="metric-label">visual styles</div>
+</div>
+<div class="metric">
+<div class="metric-value">7</div>
+<div class="metric-label">input formats</div>
+</div>
+<div class="metric">
+<div class="metric-value">&lt; 3s</div>
+<div class="metric-label">generation time</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- INSTALL -->
+<section id="install" class="install-section">
+<div class="container">
+<h2 class="section-title" style="text-align:center">Get started</h2>
+<div class="install-block">
+<code id="install-cmd">npm install -g scenecraft</code>
+<button onclick="copyCommand('install-cmd', this)" aria-label="Copy install command">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="1"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></svg>
+</button>
+</div>
+<p class="install-alt">or <span>npx scenecraft</span></p>
+<p class="install-note">Then run <code>scenecraft setup</code> to configure your Gemini API key.</p>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+<div class="footer-inner">
+<div class="footer-left">
+<span class="footer-logo">scenecraft</span>
+<div class="footer-links">
+<a href="https://github.com/sunil-dhaka/scenecraft" target="_blank" rel="noopener">GitHub</a>
+<a href="https://www.npmjs.com/package/scenecraft" target="_blank" rel="noopener">npm</a>
+</div>
+</div>
+<div class="footer-right">Built by Sunil Dhaka &middot; MIT</div>
+</div>
+</footer>
+
+<script>
+function switchTab(tab){
+document.querySelectorAll('.tab-btn').forEach(function(b){
+b.classList.toggle('active',b.dataset.tab===tab);
+});
+document.querySelectorAll('.tab-panel').forEach(function(p){
+p.classList.toggle('active',p.id==='panel-'+tab);
+});
+}
+function copyCommand(id,btn){
+var text=document.getElementById(id).textContent;
+navigator.clipboard.writeText(text).then(function(){
+var svg=btn.querySelector('svg');
+var orig=svg.innerHTML;
+svg.innerHTML='<polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+btn.style.color='var(--accent)';
+setTimeout(function(){
+svg.innerHTML=orig;
+btn.style.color='';
+},1500);
+});
+}
+</script>
+
+</body>
+</html>
